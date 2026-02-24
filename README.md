@@ -6,6 +6,8 @@ Admittedly I went overboard, but as I was asked to mock how I would tackle an E2
 
 I didn't have a local environment...so I built one. My general approach when building software is to manage local development via Docker, as I did here.
 
+Finally, I made a design decision on the Expression calculator to colorize the parenthetical pairs (like some versions of vi/vim do, or the "Rainbow Brackets" plugin for JetBrains' PHP Storm IDE). Looking at monochrome text makes tracking multiple parentheses difficult; this should improve usability.
+
 ## Quick Start
 
 ```bash

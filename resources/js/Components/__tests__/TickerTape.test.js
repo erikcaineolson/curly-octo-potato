@@ -62,7 +62,7 @@ describe('TickerTape', () => {
             props: { calculations: sampleCalculations },
         });
         // Delete buttons are the SVG buttons inside each entry
-        const deleteButtons = wrapper.findAll('button[title="Delete"]');
+        const deleteButtons = wrapper.findAll('button[aria-label="Delete calculation"]');
         expect(deleteButtons.length).toBe(2);
         await deleteButtons[0].trigger('click');
         expect(wrapper.emitted('deleteOne')).toBeTruthy();

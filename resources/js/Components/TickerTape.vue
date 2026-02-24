@@ -30,10 +30,10 @@
                     </div>
                     <button
                         @click="$emit('deleteOne', calc.id)"
-                        class="text-gray-600 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all shrink-0"
-                        title="Delete"
+                        class="text-gray-400 hover:text-red-400 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all shrink-0 p-2 -m-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        aria-label="Delete calculation"
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
                         </svg>
                     </button>
@@ -42,7 +42,7 @@
 
             <div
                 v-if="calculations.length === 0"
-                class="text-gray-600 text-sm text-center py-8"
+                class="text-gray-400 text-sm text-center py-8"
             >
                 No calculations yet
             </div>

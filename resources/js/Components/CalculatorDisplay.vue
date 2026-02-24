@@ -1,6 +1,6 @@
 <template>
-    <div class="bg-gray-900 rounded-xl p-4 font-mono">
-        <div class="text-gray-400 text-right text-sm min-h-[1.5rem] truncate">
+    <div class="bg-gray-900 rounded-xl p-4 font-mono" role="status" aria-live="polite" aria-label="Calculator display">
+        <div class="text-gray-400 text-right text-sm min-h-[1.5rem] truncate" aria-label="Current operation">
             {{ expression || '\u00A0' }}
         </div>
         <div class="text-white text-right text-3xl font-bold min-h-[2.5rem] truncate">

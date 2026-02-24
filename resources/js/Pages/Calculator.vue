@@ -1,22 +1,25 @@
 <template>
-    <div class="min-h-screen bg-gray-950 text-white flex items-center justify-center p-4">
+    <main class="min-h-screen bg-gray-950 text-white flex items-center justify-center p-4" @keydown="handleKeyDown" ref="calculatorRef">
         <div class="w-full max-w-4xl">
             <!-- Header -->
             <div class="text-center mb-6">
                 <h1 class="text-2xl font-bold tracking-tight">
                     <span class="text-blue-400">Calc</span><span class="text-amber-400">Tek</span>
                 </h1>
-                <p class="text-gray-500 text-xs mt-1">API-Driven Calculator</p>
+                <p class="text-gray-400 text-xs mt-1">API-Driven Calculator</p>
             </div>
 
             <!-- Error Toast -->
             <Transition name="fade">
                 <div
                     v-if="error"
+                    id="expression-error"
+                    role="alert"
+                    aria-live="assertive"
                     class="mb-4 bg-red-900/50 border border-red-700 text-red-200 px-4 py-2 rounded-lg text-sm flex items-center justify-between"
                 >
                     <span>{{ error }}</span>
-                    <button @click="clearError" class="text-red-400 hover:text-red-300 ml-2">&times;</button>
+                    <button @click="clearError" aria-label="Dismiss error" class="text-red-400 hover:text-red-300 ml-2">&times;</button>
                 </div>
             </Transition>
 
@@ -24,25 +27,29 @@
                 <!-- Calculator -->
                 <div class="md:col-span-3 bg-gray-900 rounded-2xl p-4 shadow-2xl shadow-black/50">
                     <!-- Mode Toggle -->
-                    <div class="flex rounded-lg bg-gray-800 p-1 mb-4">
+                    <div class="flex rounded-lg bg-gray-800 p-1 mb-4" role="tablist" aria-label="Calculator mode">
                         <button
                             @click="mode = 'simple'"
+                            role="tab"
+                            :aria-selected="mode === 'simple'"
                             :class="[
                                 'flex-1 py-1.5 text-xs font-medium rounded-md transition-all',
                                 mode === 'simple'
                                     ? 'bg-gray-700 text-white shadow-sm'
-                                    : 'text-gray-400 hover:text-gray-300',
+                                    : 'text-gray-300 hover:text-gray-200',
                             ]"
                         >
                             Standard
                         </button>
                         <button
                             @click="mode = 'expression'"
+                            role="tab"
+                            :aria-selected="mode === 'expression'"
                             :class="[
                                 'flex-1 py-1.5 text-xs font-medium rounded-md transition-all',
                                 mode === 'expression'
                                     ? 'bg-gray-700 text-white shadow-sm'
-                                    : 'text-gray-400 hover:text-gray-300',
+                                    : 'text-gray-300 hover:text-gray-200',
                             ]"
                         >
                             Expression
@@ -71,17 +78,19 @@
                     <!-- Expression Mode -->
                     <template v-else>
                         <div class="bg-gray-900 rounded-xl p-4 font-mono mb-4">
-                            <label class="text-gray-400 text-xs block mb-2">Enter expression</label>
+                            <label for="expression-input" class="text-gray-400 text-xs block mb-2">Enter expression</label>
                             <input
+                                id="expression-input"
                                 v-model="expressionInput"
                                 @keydown.enter="handleExpressionSubmit"
                                 type="text"
                                 placeholder="sqrt(((9*9)/12+(13-4))*2)^2"
-                                class="w-full bg-gray-800 text-white text-lg font-mono rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-600"
+                                :aria-describedby="error ? 'expression-error' : undefined"
+                                class="w-full bg-gray-800 text-white text-lg font-mono rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500"
                             />
                             <!-- Colorized paren preview -->
                             <ExpressionPreview :expression="expressionInput" />
-                            <div v-if="expressionResult !== null" class="text-right text-2xl font-bold text-white mt-2">
+                            <div v-if="expressionResult !== null" aria-live="polite" class="text-right text-2xl font-bold text-white mt-2">
                                 = {{ formatNumber(expressionResult) }}
                             </div>
                         </div>
@@ -101,12 +110,12 @@
                                 <div><span class="text-amber-400 font-mono">-</span> Subtraction</div>
                                 <div><span class="text-amber-400 font-mono">*</span> Multiplication</div>
                                 <div><span class="text-amber-400 font-mono">/</span> Division</div>
-                                <div><span class="text-amber-400 font-mono">^</span> Exponent <span class="text-gray-500">(2^3 = 8)</span></div>
+                                <div><span class="text-amber-400 font-mono">^</span> Exponent <span class="text-gray-400">(2^3 = 8)</span></div>
                                 <div><span class="text-amber-400 font-mono">sqrt()</span> Square root</div>
                                 <div><span class="text-amber-400 font-mono">( )</span> Parentheses</div>
                                 <div><span class="text-amber-400 font-mono">-x</span> Unary minus</div>
                             </div>
-                            <div class="border-t border-gray-700 pt-2 mt-2 text-gray-500 leading-relaxed">
+                            <div class="border-t border-gray-700 pt-2 mt-2 text-gray-400 leading-relaxed">
                                 Decimals supported. Operator precedence is respected.
                                 <br>
                                 Not supported: variables, matrices, trigonometry, logarithms, derivatives, integrals, or any symbolic algebra.
@@ -125,11 +134,11 @@
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed } from 'vue';
 import CalculatorDisplay from '../Components/CalculatorDisplay.vue';
 import CalculatorKeypad from '../Components/CalculatorKeypad.vue';
 import ExpressionPreview from '../Components/ExpressionPreview.vue';
@@ -151,6 +160,8 @@ const {
     removeOne,
     clearAll,
 } = useCalculations(props.calculations?.data || []);
+
+const calculatorRef = ref(null);
 
 // Mode
 const mode = ref('simple');
@@ -203,16 +214,15 @@ function handleKeyDown(e) {
     }
 }
 
-onMounted(() => {
-    window.addEventListener('keydown', handleKeyDown);
-});
-
-onUnmounted(() => {
-    window.removeEventListener('keydown', handleKeyDown);
-});
-
 function handleDigit(digit) {
-    displayResult.value = null;
+    if (displayResult.value !== null) {
+        currentValue.value = digit;
+        displayResult.value = null;
+        pendingOperand.value = null;
+        pendingOperator.value = null;
+        waitingForOperand.value = false;
+        return;
+    }
 
     if (waitingForOperand.value) {
         currentValue.value = digit;
@@ -223,7 +233,14 @@ function handleDigit(digit) {
 }
 
 function handleDecimal() {
-    displayResult.value = null;
+    if (displayResult.value !== null) {
+        currentValue.value = '0.';
+        displayResult.value = null;
+        pendingOperand.value = null;
+        pendingOperator.value = null;
+        waitingForOperand.value = false;
+        return;
+    }
 
     if (waitingForOperand.value) {
         currentValue.value = '0.';
