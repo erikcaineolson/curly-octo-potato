@@ -62,7 +62,7 @@ Supports: `+`, `-`, `*`, `/`, `^`, `sqrt()`, parentheses, unary minus, decimals.
 
 ## Expression Parser
 
-The expression parser is a hand-written **recursive descent parser** that safely evaluates mathematical expressions. It tokenizes and walks the input using a formal grammar — no arbitrary code execution. It supports:
+The expression parser uses a recursive descent approach to safely evaluate mathematical expressions. It tokenizes the input and walks it within strict parsing rules to avoid arbitrary code execution. It supports:
 
 - Operator precedence: `2+3*4` = `14`
 - Parentheses: `(2+3)*4` = `20`
@@ -86,7 +86,7 @@ php artisan test
 
 | Layer | Technology |
 |-------|------------|
-| Backend | Laravel 12 (PHP 8.3) |
+| Backend | Laravel 12 (PHP 8.4) |
 | Frontend | Vue 3 + Inertia.js |
 | Styling | Tailwind CSS v4 |
 | Database | MySQL 8 |
