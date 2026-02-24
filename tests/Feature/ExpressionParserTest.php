@@ -111,4 +111,31 @@ class ExpressionParserTest extends TestCase
     {
         $this->assertEqualsWithDelta(24.0, $this->parser->evaluate('6*4'), 0.0001);
     }
+
+    public function test_negative_sqrt_throws(): void
+    {
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Cannot take square root of a negative number.');
+        $this->parser->evaluate('sqrt(-4)');
+    }
+
+    public function test_unclosed_parenthesis_throws(): void
+    {
+        $this->expectException(DomainException::class);
+        $this->parser->evaluate('(2+3');
+    }
+
+    public function test_unmatched_close_parenthesis_throws(): void
+    {
+        $this->expectException(DomainException::class);
+        $this->parser->evaluate('2+3)');
+    }
+
+    public function test_deeply_nested_expression_throws(): void
+    {
+        $expression = str_repeat('(', 60) . '1' . str_repeat(')', 60);
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Expression is too deeply nested.');
+        $this->parser->evaluate($expression);
+    }
 }

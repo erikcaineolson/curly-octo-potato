@@ -129,12 +129,13 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import CalculatorDisplay from '../Components/CalculatorDisplay.vue';
 import CalculatorKeypad from '../Components/CalculatorKeypad.vue';
 import ExpressionPreview from '../Components/ExpressionPreview.vue';
 import TickerTape from '../Components/TickerTape.vue';
 import { useCalculations } from '../composables/useCalculations.js';
+import { formatNumber } from '../utils/formatNumber.js';
 
 const props = defineProps({
     calculations: { type: Object, default: () => ({ data: [] }) },
@@ -202,9 +203,13 @@ function handleKeyDown(e) {
     }
 }
 
-if (typeof window !== 'undefined') {
+onMounted(() => {
     window.addEventListener('keydown', handleKeyDown);
-}
+});
+
+onUnmounted(() => {
+    window.removeEventListener('keydown', handleKeyDown);
+});
 
 function handleDigit(digit) {
     displayResult.value = null;
@@ -289,14 +294,6 @@ async function handleExpressionSubmit() {
     }
 }
 
-function formatNumber(value) {
-    const num = parseFloat(value);
-    if (isNaN(num)) return value;
-    if (Number.isInteger(num) && Math.abs(num) < 1e15) {
-        return num.toLocaleString('en-US');
-    }
-    return num.toLocaleString('en-US', { maximumFractionDigits: 10 });
-}
 </script>
 
 <style scoped>

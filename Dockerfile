@@ -1,7 +1,5 @@
 FROM php:8.4-fpm
 
-ARG NODE_VERSION=20
-
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -15,16 +13,11 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
-    && apt-get install -y nodejs \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /var/www
 
 COPY . .
 
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader 2>/dev/null || true
-RUN npm install 2>/dev/null || true
 
 COPY docker/setup.sh /usr/local/bin/setup.sh
 RUN chmod +x /usr/local/bin/setup.sh

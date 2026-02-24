@@ -25,7 +25,7 @@
                             {{ calc.expression }}
                         </div>
                         <div class="text-white text-sm font-mono font-semibold">
-                            = {{ formatResult(calc.result) }}
+                            = {{ formatNumber(calc.result) }}
                         </div>
                     </div>
                     <button
@@ -51,20 +51,13 @@
 </template>
 
 <script setup>
+import { formatNumber } from '../utils/formatNumber.js';
+
 defineProps({
     calculations: { type: Array, default: () => [] },
 });
 
 defineEmits(['deleteOne', 'clearAll']);
-
-function formatResult(value) {
-    const num = parseFloat(value);
-    if (isNaN(num)) return value;
-    if (Number.isInteger(num) && Math.abs(num) < 1e15) {
-        return num.toLocaleString('en-US');
-    }
-    return num.toLocaleString('en-US', { maximumFractionDigits: 10 });
-}
 </script>
 
 <style scoped>

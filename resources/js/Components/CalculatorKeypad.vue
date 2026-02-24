@@ -8,7 +8,6 @@
                 'rounded-lg font-semibold text-lg py-3 transition-all duration-100',
                 'active:scale-95 focus:outline-none focus:ring-2 focus:ring-blue-400',
                 key.class,
-                key.span ? 'col-span-' + key.span : '',
             ]"
         >
             {{ key.label }}
@@ -40,8 +39,8 @@ const keys = [
     { label: '=', type: 'equals', class: 'bg-blue-600 hover:bg-blue-500 text-white' },
     { label: '+', type: 'operator', value: 'add', class: 'bg-amber-600 hover:bg-amber-500 text-white' },
 
-    { label: 'C', type: 'clear', class: 'bg-red-700 hover:bg-red-600 text-white', span: 2 },
-    { label: 'CE', type: 'clearEntry', class: 'bg-red-900 hover:bg-red-800 text-white', span: 2 },
+    { label: 'C', type: 'clear', class: 'bg-red-700 hover:bg-red-600 text-white col-span-2' },
+    { label: 'CE', type: 'clearEntry', class: 'bg-red-900 hover:bg-red-800 text-white col-span-2' },
 ];
 
 function handleKey(key) {

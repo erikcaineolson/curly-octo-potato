@@ -4,17 +4,24 @@ namespace App\Services;
 
 use DomainException;
 
+/**
+ * Recursive-descent expression parser. Not reentrant (uses instance state).
+ */
 class ExpressionParser
 {
+    private const MAX_DEPTH = 50;
+
     private string $input;
     private int $pos;
     private int $length;
+    private int $depth;
 
     public function evaluate(string $input): float
     {
         $this->input = preg_replace('/\s+/', '', $input);
         $this->pos = 0;
         $this->length = strlen($this->input);
+        $this->depth = 0;
 
         if ($this->length === 0) {
             throw new DomainException('Empty expression.');
@@ -31,11 +38,14 @@ class ExpressionParser
         return $result;
     }
 
-    /**
-     * expression = term (('+' | '-') term)*
-     */
     private function parseExpression(): float
     {
+        $this->depth++;
+
+        if ($this->depth > self::MAX_DEPTH) {
+            throw new DomainException('Expression is too deeply nested.');
+        }
+
         $result = $this->parseTerm();
 
         while ($this->pos < $this->length && in_array($this->input[$this->pos], ['+', '-'])) {
@@ -45,12 +55,11 @@ class ExpressionParser
             $result = $op === '+' ? $result + $right : $result - $right;
         }
 
+        $this->depth--;
+
         return $result;
     }
 
-    /**
-     * term = power (('*' | '/') power)*
-     */
     private function parseTerm(): float
     {
         $result = $this->parsePower();
@@ -73,38 +82,33 @@ class ExpressionParser
         return $result;
     }
 
-    /**
-     * power = unary ('^' power)?   (right-associative)
-     */
     private function parsePower(): float
     {
         $base = $this->parseUnary();
 
         if ($this->pos < $this->length && $this->input[$this->pos] === '^') {
             $this->pos++;
-            $exponent = $this->parsePower(); // right-associative recursion
+            $exponent = $this->parsePower();
             return pow($base, $exponent);
         }
 
         return $base;
     }
 
-    /**
-     * unary = ('-' unary) | function
-     */
     private function parseUnary(): float
     {
-        if ($this->pos < $this->length && $this->input[$this->pos] === '-') {
+        $negateCount = 0;
+
+        while ($this->pos < $this->length && $this->input[$this->pos] === '-') {
             $this->pos++;
-            return -$this->parseUnary();
+            $negateCount++;
         }
 
-        return $this->parseFunction();
+        $result = $this->parseFunction();
+
+        return ($negateCount % 2 === 1) ? -$result : $result;
     }
 
-    /**
-     * function = 'sqrt(' expression ')' | atom
-     */
     private function parseFunction(): float
     {
         if ($this->matchWord('sqrt(')) {
@@ -121,9 +125,6 @@ class ExpressionParser
         return $this->parseAtom();
     }
 
-    /**
-     * atom = number | '(' expression ')'
-     */
     private function parseAtom(): float
     {
         if ($this->pos < $this->length && $this->input[$this->pos] === '(') {

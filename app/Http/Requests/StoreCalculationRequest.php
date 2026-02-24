@@ -32,6 +32,11 @@ class StoreCalculationRequest extends FormRequest
                     'mode',
                     'Provide either an expression or operand_a, operand_b, and operator.'
                 );
+            } elseif ($hasExpression && $hasSimple) {
+                $validator->errors()->add(
+                    'mode',
+                    'Cannot provide both an expression and simple operands/operator.'
+                );
             }
         });
     }

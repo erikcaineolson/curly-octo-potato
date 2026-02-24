@@ -45,5 +45,5 @@ export function deleteCalculation(id) {
 }
 
 export function clearAllCalculations() {
-    return request('DELETE', '/calculations');
+    return request('DELETE', '/calculations/all');
 }

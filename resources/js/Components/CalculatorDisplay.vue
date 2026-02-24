@@ -1,7 +1,7 @@
 <template>
     <div class="bg-gray-900 rounded-xl p-4 font-mono">
         <div class="text-gray-400 text-right text-sm min-h-[1.5rem] truncate">
-            {{ expression || '&nbsp;' }}
+            {{ expression || '\u00A0' }}
         </div>
         <div class="text-white text-right text-3xl font-bold min-h-[2.5rem] truncate">
             {{ display }}
@@ -11,6 +11,7 @@
 
 <script setup>
 import { computed } from 'vue';
+import { formatNumber } from '../utils/formatNumber.js';
 
 const props = defineProps({
     expression: { type: String, default: '' },
@@ -24,13 +25,4 @@ const display = computed(() => {
     }
     return props.currentValue || '0';
 });
-
-function formatNumber(value) {
-    const num = parseFloat(value);
-    if (isNaN(num)) return value;
-    if (Number.isInteger(num) && Math.abs(num) < 1e15) {
-        return num.toLocaleString('en-US');
-    }
-    return num.toLocaleString('en-US', { maximumFractionDigits: 10 });
-}
 </script>

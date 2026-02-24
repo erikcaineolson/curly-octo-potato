@@ -156,7 +156,7 @@ class CalculationApiTest extends TestCase
             'operand_b' => 2,
         ]);
 
-        $response = $this->deleteJson('/api/calculations');
+        $response = $this->deleteJson('/api/calculations/all');
 
         $response->assertStatus(204);
 
