@@ -1,0 +1,36 @@
+FROM php:8.4-fpm
+
+ARG NODE_VERSION=20
+
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+RUN curl -fsSL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /var/www
+
+COPY . .
+
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader 2>/dev/null || true
+RUN npm install 2>/dev/null || true
+
+COPY docker/setup.sh /usr/local/bin/setup.sh
+RUN chmod +x /usr/local/bin/setup.sh
+
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache 2>/dev/null || true
+
+EXPOSE 9000
+
+CMD ["/usr/local/bin/setup.sh"]
