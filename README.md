@@ -2,6 +2,10 @@
 
 An API-driven calculator with history ("ticker tape"), built with **Laravel 12 + Inertia.js + Vue 3 + MySQL**, fully Dockerized.
 
+Admittedly I went overboard, but as I was asked to mock how I would tackle an E2E component. During our conversation the comment was made we don't really do much frontend testing, which is fine, but as the request asked for coverage, and he mentioned we maintain 99.9% coverage on the backend, I figured it made sense in this example.
+
+I didn't have a local environment...so I built one. My general approach when building software is to manage local development via Docker, as I did here.
+
 ## Quick Start
 
 ```bash
@@ -18,7 +22,7 @@ docker compose up -d --build
 open http://localhost:8000
 ```
 
-The Vite dev server runs on the `node` container at port **5173** for hot module replacement during development.
+The Vite dev server runs on the `node` container at port **5173** for hot module replacement during development. If you visit http://localhost:5173, you'll see the info reflected on that. I didn't change it because it wasn't pertinent here, and local development doesn't require the restrictions of a prod environment. On production, we could [preferably] not run any dev servers, but if we REALLY wanted to keep the hot module replacement functionality, we could guard it behind a firewall. I can't imagine ever having a reason to keep it on prod.
 
 ## Features
 
@@ -92,29 +96,3 @@ php artisan test
 | Database | MySQL 8 |
 | Build | Vite |
 | Infrastructure | Docker Compose |
-
-## Project Structure
-
-```
-app/
-├── Http/Controllers/
-│   ├── Api/CalculationController.php   # JSON API
-│   └── CalculatorController.php        # Inertia page
-├── Http/Requests/StoreCalculationRequest.php
-├── Http/Resources/CalculationResource.php
-├── Models/Calculation.php
-└── Services/ExpressionParser.php       # Recursive descent parser
-
-resources/js/
-├── Pages/Calculator.vue                # Main page
-├── Components/
-│   ├── CalculatorDisplay.vue
-│   ├── CalculatorKeypad.vue
-│   └── TickerTape.vue
-├── composables/useCalculations.js
-└── services/api.js
-
-tests/Feature/
-├── CalculationApiTest.php              # 14 API tests
-└── ExpressionParserTest.php            # 17 parser tests
-```
