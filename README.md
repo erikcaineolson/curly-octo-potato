@@ -1,4 +1,4 @@
-# CalcTek Calculator
+# Virtual Calculator
 
 An API-driven calculator with history ("ticker tape"), built with **Laravel 12 + Inertia.js + Vue 3 + MySQL**, fully Dockerized.
 
